@@ -21,12 +21,15 @@ import baritone.Baritone;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PickaxeItem;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
@@ -188,6 +191,16 @@ public class ToolSet {
         if (hardness < 0) {
             return -1;
         }
+
+        // ===== 特殊逻辑：让 Baritone 用镐子挖棕色蘑菇方块 =====
+        if (state.is(Blocks.BROWN_MUSHROOM_BLOCK)) {
+            if (item.getItem() instanceof PickaxeItem) {
+                return 1000.0D; // 镐子速度设为极高，确保被选中
+            } else if (item.getItem() instanceof AxeItem) {
+                return 1.0D;    // 斧头速度降为极低，避免被选中
+            }
+        }
+        // ===================================================
 
         float speed = item.getDestroySpeed(state);
         if (speed > 1) {
